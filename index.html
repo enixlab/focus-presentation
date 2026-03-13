@@ -9,7 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;overflow:hidden;background:#ffffff;color:#1a1400;font-family:'Inter',sans-serif;}
+html,body{height:100%;overflow:hidden;background:#ffffff;color:#1a1400;font-family:'Inter',sans-serif;-webkit-text-size-adjust:100%;touch-action:pan-y;}
 
 .slides{width:100%;height:100vh;position:relative;}
 .slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .8s ease;pointer-events:none;}
@@ -57,6 +57,50 @@ html,body{height:100%;overflow:hidden;background:#ffffff;color:#1a1400;font-fami
 .nav-dot{width:14px;height:14px;border-radius:50%;background:#d4c8a0;cursor:pointer;transition:all .3s;}
 .nav-dot.active{background:#C9A227;transform:scale(1.3);}
 .nav-hint{position:fixed;bottom:30px;left:40px;font-size:13px;color:#b0a070;letter-spacing:1px;}
+
+/* ── RESPONSIVE MOBILE ── */
+@media (max-width: 768px) {
+  /* Slide 1 */
+  .s1-f{font-size:clamp(52px,18vw,96px);letter-spacing:4px;}
+  .s1-sub{font-size:clamp(11px,3.2vw,16px);letter-spacing:3px;margin-bottom:20px;text-align:center;padding:0 16px;}
+  .s1-sep{width:60vw;margin-bottom:20px;}
+  .s1-msg{font-size:clamp(16px,5vw,26px);letter-spacing:0;padding:0 24px;text-align:center;}
+  .s1-hint{font-size:clamp(10px,2.8vw,14px);letter-spacing:2px;margin-top:20px;}
+
+  /* Slide 2 — scrollable */
+  #s2{overflow-y:auto;overflow-x:hidden;justify-content:flex-start;padding:44px 0 70px;-webkit-overflow-scrolling:touch;}
+  .s2-title{font-size:clamp(24px,8vw,36px);letter-spacing:4px;margin-bottom:20px;}
+  .qr-row{flex-direction:column;gap:16px;align-items:center;padding:0 20px;width:100%;}
+  .qr-card{min-width:auto;width:min(85vw,320px);padding:18px 20px;gap:10px;border-radius:16px;}
+  .qr-arrow{display:none;}
+  .qr-num{font-size:26px;}
+  .qr-label{font-size:17px;letter-spacing:2px;}
+  .qr-desc{font-size:13px;line-height:1.6;}
+  .qr-url{font-size:11px;}
+  .qr-box{padding:10px;}
+  .s2-bottom{font-size:12px;margin-top:16px;padding:0 20px;text-align:center;}
+
+  /* Slide 3 */
+  .s3-f{font-size:clamp(40px,14vw,72px);letter-spacing:4px;margin-bottom:12px;}
+  .s3-q{font-size:clamp(22px,8vw,42px);letter-spacing:2px;margin-bottom:12px;text-align:center;padding:0 16px;}
+  .s3-sep{width:50vw;margin-bottom:16px;}
+  .s3-lines{font-size:clamp(13px,3.8vw,18px);line-height:1.8;padding:0 24px;text-align:center;}
+  .s3-qr-row{gap:24px;margin-top:20px;flex-wrap:wrap;justify-content:center;}
+
+  /* Nav */
+  .nav{bottom:14px;right:16px;}
+  .nav-hint{bottom:14px;left:16px;font-size:11px;}
+}
+
+@media (max-width: 380px) {
+  .s1-f{font-size:44px;}
+  .s1-msg{font-size:15px;}
+  .s2-title{font-size:22px;}
+  .qr-card{width:90vw;padding:14px 16px;}
+  .s3-f{font-size:34px;}
+  .s3-q{font-size:20px;}
+  .s3-lines{font-size:12px;}
+}
 </style>
 </head>
 <body>
@@ -153,8 +197,9 @@ function genQR(canvasId, url, size) {
   }
 }
 
-genQR('qr1', 'https://discord.gg/NZ56mPMJ', 240);
-genQR('qr2', 'https://groupe-focus-card.vercel.app', 240);
+var qrSize = window.innerWidth < 768 ? 160 : 240;
+genQR('qr1', 'https://discord.gg/NZ56mPMJ', qrSize);
+genQR('qr2', 'https://groupe-focus-card.vercel.app', qrSize);
 
 // Navigation
 let current = 0;
@@ -179,6 +224,14 @@ document.addEventListener('click', e => {
   if (e.clientX > window.innerWidth / 2) go(current + 1);
   else go(current - 1);
 });
+
+// Swipe tactile
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>50){dx<0?go(current+1):go(current-1);}
+},{passive:true});
 </script>
 </body>
 </html>
